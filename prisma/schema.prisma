@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   
+  sessions  Session[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  title     String
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  drawings  Drawing[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Drawing {
+  id         String   @id @default(cuid())
+  session    Session  @relation(fields: [sessionId], references: [id])
+  sessionId  String
+  strokes    Json
+  createdAt  DateTime @default(now())
+}
